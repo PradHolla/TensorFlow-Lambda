@@ -1,5 +1,5 @@
 # Pull the base image with python 3.8 as a runtime for your Lambda
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.9
 
 # Install OS packages for Pillow-SIMD
 RUN yum -y install tar gzip zlib freetype-devel \
@@ -29,10 +29,10 @@ RUN yum -y install tar gzip zlib freetype-devel \
 COPY requirements.txt ./
 
 # Install the python requirements from requirements.txt
-RUN python3.8 -m pip install -r requirements.txt
+RUN pip install https://github.com/diyor28/tf-docker-m1/releases/download/v1.0.0/tensorflow-2.8.0-cp39-cp39-linux_aarch64.whl
 # Replace Pillow with Pillow-SIMD to take advantage of AVX2
-RUN pip uninstall -y pillow && CC="cc -mavx2" pip install -U --force-reinstall pillow-simd
-
+RUN pip install pillow && pip install numpy
+# RUN pip uninstall -y pillow && CC="cc -mavx2" pip install -U --force-reinstall pillow-simd
 # Copy the earlier created app.py file to the container
 COPY app.py ./
 
